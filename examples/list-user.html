@@ -1,0 +1,44 @@
+<html ng-app="ListUser">
+	<head>
+		<link rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+	</head>
+	<body ng-controller="MainController">
+		<table ng-simple-datatable options="datatableOptions">
+			<thead>
+				<tr>
+					<th>name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="user in userList">
+					<td>{{user.name}}</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script type="text/javascript" src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular.min.js"></script>
+		<script type="text/javascript" src="/distribution/js/ng-simple-datatable.js"></script>
+		<script type="text/javascript">
+			(function(){
+				var application = angular.module('ListUser',['NgSimpleDatatable']);
+				application.controller('MainController', ['$scope',function($scope){
+					console.log('inside controller');
+					$scope.datatableOptions = {
+							
+					};
+					
+					var userList = [];
+					for(var i=0; i < 10000; i++) {
+						userList.push({
+							name : 'user_' + i,
+						});
+					}
+					
+					$scope.userList = userList;
+				}]);
+			})()
+		</script>
+	</body>
+</html>
