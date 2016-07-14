@@ -3,36 +3,126 @@
 		<link rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
 	</head>
 	<body ng-controller="MainController">
-		<table ng-simple-datatable options="datatableOptions">
+		<label>custom name filter table 1:</label>
+		<input type="text" ng-model="customNameFilter1">
+		<table id="table_1" ng-simple-datatable options="datatableOptions" extensions="datatableExtensions1">
 			<thead>
 				<tr>
+					<th>id</th>
 					<th>name</th>
+					<th>email</th>
+					<th>phone</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr ng-repeat="user in userList">
+					<td>{{user.id}}</td>
 					<td>{{user.name}}</td>
+					<td>{{user.email}}</td>
+					<td>{{user.phone}}</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<label>custom name filter table 2:</label>
+		<input type="text" ng-model="customNameFilter2">
+		
+		<table id="table_2" ng-simple-datatable options="datatableOptions" extensions="datatableExtensions2">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>name</th>
+					<th>email</th>
+					<th>phone</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="user in userList">
+					<td>{{user.id}}</td>
+					<td>{{user.name}}</td>
+					<td>{{user.email}}</td>
+					<td>{{user.phone}}</td>
 				</tr>
 			</tbody>
 		</table>
 		
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<script type="text/javascript" src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="https://www.datatables.net/release-datatables/extensions/TableTools/js/dataTables.tableTools.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.flash.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+		<script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+		<script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.html5.min.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular.min.js"></script>
 		<script type="text/javascript" src="/distribution/js/ng-simple-datatable.js"></script>
 		<script type="text/javascript">
 			(function(){
 				var application = angular.module('ListUser',['NgSimpleDatatable']);
-				application.controller('MainController', ['$scope',function($scope){
+				application.controller('MainController', ['$scope','$timeout',function($scope, $timeout){
 					console.log('inside controller');
 					$scope.datatableOptions = {
-							
+							columnDefs: [
+					               {
+					                   "targets": [ 3 ],
+					                   "searchable": false
+					               }
+							 ],
+							 dom: 'Bfrtip',
+							 buttons: [
+								{
+								    extend: 'csv',
+								    text: 'Copy all data',
+								    exportOptions: {
+								        modifier: {
+								            search: 'none'
+								        }
+								    }
+								}
+							 ]
 					};
 					
+					
+					$scope.datatableExtensions1 = [{
+  							type : 'search',
+  							callback : function( settings, data, dataIndex ) {
+  								if($scope.customNameFilter1 != undefined 
+  										&& $scope.customNameFilter1.length > 0) {
+  									if(data[1].indexOf($scope.customNameFilter1) >= 0) {
+  	  									return true;
+  	  								}
+  	  								return false;
+  								}
+  								return true;
+  							},
+  							watch : ['customNameFilter1']
+  					}];
+					
+					$scope.datatableExtensions2 = [{
+							type : 'search',
+							callback : function( settings, data, dataIndex ) {
+  								if($scope.customNameFilter2 != undefined 
+  										&& $scope.customNameFilter2.length > 0) {
+  									if(data[1].indexOf($scope.customNameFilter2) >= 0) {
+  	  									return true;
+  	  								}
+  	  								return false;
+  								}
+  								return true;
+  							},
+							watch : ['customNameFilter2']
+					}];
+				
+					
 					var userList = [];
-					for(var i=0; i < 10000; i++) {
+					for(var i=0; i < 100; i++) {
 						userList.push({
+							id : i,
 							name : 'user_' + i,
+							email: 'user_' + i + '@domain.com',
+							phone : (i * 98765678 + '').substring(0, 10)
 						});
 					}
 					
