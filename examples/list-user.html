@@ -1,80 +1,128 @@
-<html ng-app="ListUser">
+<html ng-app="ListUser" ng-cloak>
 	<head>
-		<link rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+	  	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.1/css/buttons.bootstrap.min.css">
 	</head>
 	<body ng-controller="MainController">
 		<label>custom name filter table 1:</label>
-		<input type="text" ng-model="customNameFilter1">
-		<table id="table_1" ng-simple-datatable options="datatableOptions" extensions="datatableExtensions1">
+		<input type="text" class="form-control"  style="width : 25%" ng-model="customNameFilter1"><br>
+		<br>
+		<table id="table_1" class="table table-bordered" ng-simple-datatable options="datatableOptions" extensions="datatableExtensions1">
 			<thead>
 				<tr>
 					<th>id</th>
 					<th>name</th>
 					<th>email</th>
 					<th>phone</th>
+					<th>Action</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr ng-repeat="user in userList">
-					<td>{{user.id}}</td>
-					<td>{{user.name}}</td>
-					<td>{{user.email}}</td>
-					<td>{{user.phone}}</td>
-				</tr>
-			</tbody>
 		</table>
 		
 		<label>custom name filter table 2:</label>
-		<input type="text" ng-model="customNameFilter2">
+		<input type="text" class="form-control" style="width : 25%" ng-model="customNameFilter2"><br>
+		<br>
 		
-		<table id="table_2" ng-simple-datatable options="datatableOptions" extensions="datatableExtensions2">
+		<table id="table_2" class="table table-bordered" ng-simple-datatable options="datatableOptions" extensions="datatableExtensions2">
 			<thead>
 				<tr>
 					<th>id</th>
 					<th>name</th>
 					<th>email</th>
 					<th>phone</th>
+					<th>Action</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr ng-repeat="user in userList">
-					<td>{{user.id}}</td>
-					<td>{{user.name}}</td>
-					<td>{{user.email}}</td>
-					<td>{{user.phone}}</td>
-				</tr>
-			</tbody>
 		</table>
 		
+		
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="https://www.datatables.net/release-datatables/extensions/TableTools/js/dataTables.tableTools.js"></script>
 		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.bootstrap.min.js"></script>
 		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.flash.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
 		<script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
 		<script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
 		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.html5.min.js"></script>
 		<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular.min.js"></script>
-		<script type="text/javascript" src="/distribution/js/ng-simple-datatable.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.5.8/angular-sanitize.min.js"></script>
+		<script type="text/javascript" src="ng-simple-datatable.js"></script>
 		<script type="text/javascript">
 			(function(){
+				'use strict';
 				var application = angular.module('ListUser',['NgSimpleDatatable']);
-				application.controller('MainController', ['$scope','$timeout',function($scope, $timeout){
-					console.log('inside controller');
+				application.controller('MainController', ['$scope','$timeout', '$sce',function($scope, $timeout, $sce){
+				  
+				  function createTestData() {
+				    	var userList = [];
+					    for(var i = 1; i <= 100; i++) {
+    						userList.push({
+    							id : i,
+    							name : 'user_' + i,
+    							email: 'user_' + i + '@domain.com',
+    							phone : (i * 98765678 + '').substring(0, 10)
+    						});
+					    }
+					    
+					    return userList;
+				  }
+				
 					$scope.datatableOptions = {
-							columnDefs: [
-					               {
-					                   "targets": [ 3 ],
-					                   "searchable": false
-					               }
-							 ],
-							 dom: 'Bfrtip',
+					  data : createTestData(),
+					  createdRow : function(row, data, index) {
+					    console.log(data.id);
+					  },
+					   /* serverSide: true,
+					    ajax: function (data, callback, settings) {
+				        callback({
+				          draw: 1,
+                  recordsTotal: 100,
+                  recordsFiltered: 100,
+                  data: createTestData()
+				        });    
+              },
+              */
+							dom:"Blfrtip",
+							columns:[
+							  {
+							    data: 'id'
+							  },
+							  {
+							    data: 'name'
+							  },
+							  {
+							    data: 'email'
+							  },
+							  {
+							    data: 'phone'
+							  },
+							  { 
+							    render: function (data, type, row, meta) {
+                    return '<a href="" ng-click="editUser('+row.id+')">edit</a>';
+                  }
+							  }
+							],
 							 buttons: [
 								{
 								    extend: 'csv',
-								    text: 'Copy all data',
+								    filename: 'users',
+								    text: 'export csv',
+								    exportOptions: {
+								        modifier: {
+								            search: 'none'
+								        }
+								    }
+								},
+								{
+								    extend: 'pdf',
+								    filename: 'users',
+								    text: 'export pdf',
 								    exportOptions: {
 								        modifier: {
 								            search: 'none'
@@ -116,17 +164,11 @@
 					}];
 				
 					
-					var userList = [];
-					for(var i=0; i < 100; i++) {
-						userList.push({
-							id : i,
-							name : 'user_' + i,
-							email: 'user_' + i + '@domain.com',
-							phone : (i * 98765678 + '').substring(0, 10)
-						});
+					$scope.editUser = function(id) {
+					  console.log('editing user ' + id);
+					  return false;
 					}
 					
-					$scope.userList = userList;
 				}]);
 			})()
 		</script>

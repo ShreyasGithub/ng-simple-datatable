@@ -2,12 +2,18 @@
 	'use strict';
 
 	var module = angular.module('NgSimpleDatatable',[]);
-	module.directive('ngSimpleDatatable', ['$timeout',function($timeout){
+	module.directive('ngSimpleDatatable', ['$timeout', '$compile', function($timeout, $compile){
 		return {
 		      restrict : 'AE',
 		      link : function($scope, element, attributes) {
-		    	  if($scope.ngSimpleDatatable == undefined) {
-		    		  $scope.ngSimpleDatatable = {
+		    	  if(attributes.id == undefined || attributes.id == null) {
+		    		  console.error("id attribute is required for ng-simple-datatable as it is used to track datatable instances");
+		    		  return false;
+		    	  }
+		    	  element.hide();
+		    	  
+		    	  if($scope.$parent.ngSimpleDatatable == undefined) {
+		    		  $scope.$parent.ngSimpleDatatable = {
 		    				  datatables : {}
 		    		  };
 		    	  }
@@ -49,9 +55,20 @@
 		    	  
 		    	  function reInitializeDatatable(options) {
     				  $timeout(function(){
+    				    var optionsCopy = angular.copy(options);
+    				    var userCreatedRowFunction = optionsCopy.createdRow;
+  				      optionsCopy.createdRow = function(row, data, index) {
+  				        if(userCreatedRowFunction) {
+  						      userCreatedRowFunction(row, data, index);
+  				        }
+  						    $compile(row)($scope);
+  					    }
+    				    
     					  if($scope.ngSimpleDatatable.datatables[attributes.id] != undefined){
+    						  element.hide();
 	    					  $scope.ngSimpleDatatable.datatables[attributes.id].destroy();
-	    					  $scope.ngSimpleDatatable.datatables[attributes.id] = element.DataTable(options);
+	    					  $scope.ngSimpleDatatable.datatables[attributes.id] = element.DataTable(optionsCopy);
+	    					  element.show();
     					  } else {
     						  $timeout(function(){
     							  reInitializeDatatable(options);
@@ -59,14 +76,17 @@
     					  }
     				  });
 		    	  }
-		
+		    	  
+		          
 		    	  $(document).ready(function(){
 		    		  $timeout(function(){
 		    			  if($scope.ngSimpleDatatable.datatables[attributes.id] == undefined){
 		    				  $scope.ngSimpleDatatable.datatables[attributes.id] = element.DataTable();
+		    				  element.show();
 		    			  }
 		    		  });
 		    	  });
+		    	  
 		      }
 		 };
 	}]);
