@@ -4,4 +4,4 @@ An example is equal to pages of documentation, please check the example folder o
 
 **LICENSE : FREE**
 
-**DISCLAIMER : ** The developers of this project are not responsible for any misuse or any data loss or corruption occurred due to use of the code in the project. By using the code in the project you are responsible for all consequences. 
+**DISCLAIMER :** The developers of this project are not responsible for any misuse or any data loss or corruption occurred due to use of the code in the project. By using the code in the project you are responsible for all consequences. 
